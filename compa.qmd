@@ -1,0 +1,89 @@
+---
+title: "comp session A"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+
+```
+
+```{r}
+quarter_splits <- c(1.0, 1.1, 1.2, 1.1, 1.4, 1.5, 1.6, 1.4)
+
+for(i in seq_along(quarter_splits)) {
+  print(quarter_splits[i] + quarter_splits[i + 1])
+}
+```
+
+# Intro to functions
+
+### make a function to double the user input
+
+```{r}
+double_this <- function(my_value) {
+  print(my_value * 2)
+}
+
+double_this(5)
+
+# this function is also vectorized!!!
+double_this(c(1, 2, 10, 175))
+
+```
+
+```{r}
+#Write a function that asks for a users function name and age, and returns an exclamation like "My name is __ and I am __ years old
+
+name_age <- function(name, age) {
+  print(paste("My name is", name, "and I am", age, "years old"))
+}
+
+```
+
+### conditional function
+
+```{r}
+calc_age <- function(animal, human_age) {
+  if(animal == "dog") {
+    print(human_age * 7)
+  } else if(animal == "goat") {
+    print(human_age * 4.7)
+  }
+  else print(paste0("This function is not built to calculate ages of ", animal))
+}
+```
+
+## data frames
+
+```{r}
+dog_choice <- tribble(
+  ~dog_name, ~food, 
+  "Khora", "everything",
+  "Teddy", "salmon",
+  "Waffle", "pancakes",
+  "Banjo", "chicken"
+)
+
+dog_menu <- function(name) {
+  my_subset <- filter(dog_choice, dog_name == name)
+  print(paste("My name is", my_subset$dog_name, "and my favorite food is", my_subset$food))
+}
+
+
+```
+
+## Functions meet for loops
+
+```{r}
+means_over_columns <- function(df) {
+  for(i in seq_along(df)) {
+    col_mean <- mean(df[[i]], na.rm = TRUE) # calculate mean
+    column_name <- colnames(df[i]) #pull out col names
+    print(paste("The mean value of", column_name, "is", col_mean))
+  }
+}
+
+means_over_columns(df = mtcars)
+```

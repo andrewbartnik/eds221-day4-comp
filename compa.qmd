@@ -87,3 +87,99 @@ means_over_columns <- function(df) {
 
 means_over_columns(df = mtcars)
 ```
+
+## Logistic growth
+
+```{r}
+
+#shortcut - cmd/opt/x
+
+logistic_growth <- function(K, N0, r, time) {
+  K / (1 + ((K - N0) / N0) * exp(-r * time))
+}
+
+#test
+logistic_growth(K = 5000, N0 = 100, r = 0.01, t = 42)
+
+# add a time vector
+
+time_vec <- seq(from = 0, to = 35, by = 0.1)
+
+pop_35 <- logistic_growth(N0 = 40, K = 8000, r = 0.5, time = time_vec)
+
+pop_time_35_df <- data.frame(time_vec, pop_35)
+
+ggplot(pop_time_35_df, aes(x = time_vec, y = pop_35, color = time_vec, size = pop_35)) + geom_line()
+```
+
+```{r}
+pop_35_vec <- vector(mode = "numeric", length = length(time_vec))
+
+for(i in seq_along(time_vec)) {
+  population <- logistic_growth(N0 = 100, K = 6000, r = 0.27, time = time_vec[i])
+  pop_35_vec[i] <- population
+}
+
+pop_35_vec
+
+# now iterate to extend over multiple growth rates
+
+r_seq <- seq(from = 0.2, to = 0.4, by = 0.01)
+
+```
+
+```{r}
+out_matrix <- matrix(nrow = length(time_vec), ncol = length(r_seq))
+```
+
+```{r}
+for(i in seq_along(r_seq)) {
+  for(j in seq_along(time_vec)) {
+    pop <- logistic_growth(N0 = 100, K = 6000, r = r_seq[i], time = time_vec[j])
+    out_matrix[j, i] <- pop
+  }
+}
+```
+
+##### now wrangle it
+
+```{r}
+pop_df <- data.frame(out_matrix, time = time_vec)
+
+colnames(pop_df) <- c(paste0("gr_", r_seq), "time")
+
+logistic_df_long<- pop_df |> 
+  pivot_longer(cols = -time, values_to = "population", names_to = "growth_rate")
+
+ggplot(logistic_df_long, aes(x = time, y = population, color = growth_rate)) +geom_line(size = 0.3) 
+```
+
+Use `warning` to add a warning
+
+Use `stop` to add an error
+
+P = 0.3/rho A v\^3 - in watts
+
+#rho = air density (kg/m\^3)
+
+#a = area covered by turbine (m\^2)
+
+#v = wind velocity (m/s)
+
+```{r}
+calc_wind_power <- function(rho, radius, windspeed) {
+  0.3 * rho * pi * (radius ^ 2) * (windspeed ^ 3)
+  if (windspeed > 130){
+    warning("woah, thats really fast. are you sure??")
+  }
+  if (rho > 1.225) {
+    warning("that air density is suspicious")
+  }
+  if (radius < 0) {
+    stop("rotor radius MUST be a positive value (in metres)")
+  }
+}
+  
+
+calc_wind_power(1.225, 50, 35)
+```

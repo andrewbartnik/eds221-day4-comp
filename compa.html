@@ -231,6 +231,150 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 </section>
+<section id="logistic-growth" class="level2">
+<h2 class="anchored" data-anchor-id="logistic-growth">Logistic growth</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#shortcut - cmd/opt/x</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>logistic_growth <span class="ot">&lt;-</span> <span class="cf">function</span>(K, N0, r, time) {</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  K <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> ((K <span class="sc">-</span> N0) <span class="sc">/</span> N0) <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>r <span class="sc">*</span> time))</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#test</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">logistic_growth</span>(<span class="at">K =</span> <span class="dv">5000</span>, <span class="at">N0 =</span> <span class="dv">100</span>, <span class="at">r =</span> <span class="fl">0.01</span>, <span class="at">t =</span> <span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 150.6238</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add a time vector</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>time_vec <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">35</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>pop_35 <span class="ot">&lt;-</span> <span class="fu">logistic_growth</span>(<span class="at">N0 =</span> <span class="dv">40</span>, <span class="at">K =</span> <span class="dv">8000</span>, <span class="at">r =</span> <span class="fl">0.5</span>, <span class="at">time =</span> time_vec)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>pop_time_35_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(time_vec, pop_35)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pop_time_35_df, <span class="fu">aes</span>(<span class="at">x =</span> time_vec, <span class="at">y =</span> pop_35, <span class="at">color =</span> time_vec, <span class="at">size =</span> pop_35)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="compa_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>pop_35_vec <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"numeric"</span>, <span class="at">length =</span> <span class="fu">length</span>(time_vec))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">seq_along</span>(time_vec)) {</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  population <span class="ot">&lt;-</span> <span class="fu">logistic_growth</span>(<span class="at">N0 =</span> <span class="dv">100</span>, <span class="at">K =</span> <span class="dv">6000</span>, <span class="at">r =</span> <span class="fl">0.27</span>, <span class="at">time =</span> time_vec[i])</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  pop_35_vec[i] <span class="ot">&lt;-</span> population</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>pop_35_vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1]  100.0000  102.6899  105.4509  108.2848  111.1934  114.1786  117.2424
+  [8]  120.3867  123.6135  126.9250  130.3232  133.8103  137.3885  141.0602
+ [15]  144.8275  148.6929  152.6587  156.7275  160.9018  165.1841  169.5770
+ [22]  174.0833  178.7057  183.4470  188.3099  193.2975  198.4127  203.6585
+ [29]  209.0380  214.5544  220.2108  226.0104  231.9567  238.0530  244.3027
+ [36]  250.7094  257.2765  264.0078  270.9069  277.9775  285.2235  292.6487
+ [43]  300.2570  308.0525  316.0392  324.2211  332.6024  341.1874  349.9803
+ [50]  358.9854  368.2071  377.6499  387.3182  397.2165  407.3494  417.7215
+ [57]  428.3375  439.2020  450.3199  461.6958  473.3346  485.2411  497.4201
+ [64]  509.8765  522.6153  535.6412  548.9593  562.5745  576.4916  590.7156
+ [71]  605.2514  620.1038  635.2778  650.7782  666.6098  682.7774  699.2857
+ [78]  716.1394  733.3431  750.9013  768.8186  787.0992  805.7476  824.7679
+ [85]  844.1642  863.9406  884.1007  904.6485  925.5874  946.9209  968.6523
+ [92]  990.7846 1013.3207 1036.2634 1059.6152 1083.3783 1107.5549 1132.1467
+ [99] 1157.1555 1182.5824 1208.4287 1234.6951 1261.3821 1288.4900 1316.0187
+[106] 1343.9677 1372.3364 1401.1237 1430.3282 1459.9482 1489.9816 1520.4259
+[113] 1551.2784 1582.5357 1614.1943 1646.2501 1678.6990 1711.5360 1744.7559
+[120] 1778.3533 1812.3221 1846.6559 1881.3479 1916.3910 1951.7774 1987.4993
+[127] 2023.5482 2059.9152 2096.5912 2133.5666 2170.8314 2208.3754 2246.1878
+[134] 2284.2576 2322.5734 2361.1235 2399.8958 2438.8782 2478.0579 2517.4220
+[141] 2556.9575 2596.6509 2636.4887 2676.4570 2716.5419 2756.7292 2797.0045
+[148] 2837.3535 2877.7616 2918.2141 2958.6964 2999.1938 3039.6915 3080.1747
+[155] 3120.6288 3161.0389 3201.3905 3241.6690 3281.8601 3321.9493 3361.9225
+[162] 3401.7658 3441.4652 3481.0072 3520.3785 3559.5657 3598.5562 3637.3372
+[169] 3675.8963 3714.2217 3752.3015 3790.1243 3827.6792 3864.9553 3901.9425
+[176] 3938.6306 3975.0101 4011.0718 4046.8068 4082.2068 4117.2636 4151.9698
+[183] 4186.3180 4220.3014 4253.9137 4287.1488 4320.0011 4352.4655 4384.5371
+[190] 4416.2116 4447.4850 4478.3536 4508.8142 4538.8640 4568.5005 4597.7216
+[197] 4626.5256 4654.9109 4682.8767 4710.4221 4737.5467 4764.2505 4790.5336
+[204] 4816.3966 4841.8403 4866.8656 4891.4741 4915.6671 4939.4467 4962.8148
+[211] 4985.7737 5008.3260 5030.4743 5052.2215 5073.5708 5094.5254 5115.0887
+[218] 5135.2642 5155.0557 5174.4671 5193.5023 5212.1654 5230.4607 5248.3923
+[225] 5265.9647 5283.1824 5300.0500 5316.5719 5332.7530 5348.5979 5364.1114
+[232] 5379.2983 5394.1634 5408.7117 5422.9480 5436.8773 5450.5043 5463.8342
+[239] 5476.8717 5489.6218 5502.0894 5514.2793 5526.1966 5537.8459 5549.2322
+[246] 5560.3603 5571.2348 5581.8606 5592.2423 5602.3847 5612.2922 5621.9695
+[253] 5631.4212 5640.6516 5649.6653 5658.4665 5667.0597 5675.4491 5683.6389
+[260] 5691.6332 5699.4362 5707.0519 5714.4844 5721.7374 5728.8150 5735.7208
+[267] 5742.4587 5749.0323 5755.4453 5761.7012 5767.8035 5773.7557 5779.5611
+[274] 5785.2231 5790.7450 5796.1299 5801.3809 5806.5013 5811.4939 5816.3618
+[281] 5821.1078 5825.7349 5830.2457 5834.6432 5838.9298 5843.1083 5847.1813
+[288] 5851.1512 5855.0205 5858.7917 5862.4671 5866.0490 5869.5397 5872.9414
+[295] 5876.2563 5879.4865 5882.6340 5885.7009 5888.6892 5891.6008 5894.4376
+[302] 5897.2015 5899.8942 5902.5176 5905.0733 5907.5631 5909.9886 5912.3513
+[309] 5914.6530 5916.8950 5919.0790 5921.2063 5923.2784 5925.2968 5927.2626
+[316] 5929.1774 5931.0423 5932.8587 5934.6278 5936.3508 5938.0288 5939.6630
+[323] 5941.2546 5942.8046 5944.3141 5945.7841 5947.2156 5948.6097 5949.9672
+[330] 5951.2892 5952.5765 5953.8301 5955.0508 5956.2395 5957.3969 5958.5240
+[337] 5959.6214 5960.6900 5961.7305 5962.7436 5963.7301 5964.6906 5965.6258
+[344] 5966.5364 5967.4230 5968.2862 5969.1267 5969.9450 5970.7417 5971.5174
+[351] 5972.2726</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now iterate to extend over multiple growth rates</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>r_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="fl">0.2</span>, <span class="at">to =</span> <span class="fl">0.4</span>, <span class="at">by =</span> <span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>out_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> <span class="fu">length</span>(time_vec), <span class="at">ncol =</span> <span class="fu">length</span>(r_seq))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">seq_along</span>(r_seq)) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="fu">seq_along</span>(time_vec)) {</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    pop <span class="ot">&lt;-</span> <span class="fu">logistic_growth</span>(<span class="at">N0 =</span> <span class="dv">100</span>, <span class="at">K =</span> <span class="dv">6000</span>, <span class="at">r =</span> r_seq[i], <span class="at">time =</span> time_vec[j])</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    out_matrix[j, i] <span class="ot">&lt;-</span> pop</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="now-wrangle-it" class="level5">
+<h5 class="anchored" data-anchor-id="now-wrangle-it">now wrangle it</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pop_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(out_matrix, <span class="at">time =</span> time_vec)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pop_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste0</span>(<span class="st">"gr_"</span>, r_seq), <span class="st">"time"</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>logistic_df_long<span class="ot">&lt;-</span> pop_df <span class="sc">|&gt;</span> </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>time, <span class="at">values_to =</span> <span class="st">"population"</span>, <span class="at">names_to =</span> <span class="st">"growth_rate"</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(logistic_df_long, <span class="fu">aes</span>(<span class="at">x =</span> time, <span class="at">y =</span> population, <span class="at">color =</span> growth_rate)) <span class="sc">+</span><span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">0.3</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="compa_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Use <code>warning</code> to add a warning</p>
+<p>Use <code>stop</code> to add an error</p>
+<p>P = 0.3/rho A v^3 - in watts</p>
+<p>#rho = air density (kg/m^3)</p>
+<p>#a = area covered by turbine (m^2)</p>
+<p>#v = wind velocity (m/s)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>calc_wind_power <span class="ot">&lt;-</span> <span class="cf">function</span>(rho, radius, windspeed) {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.3</span> <span class="sc">*</span> rho <span class="sc">*</span> pi <span class="sc">*</span> (radius <span class="sc">^</span> <span class="dv">2</span>) <span class="sc">*</span> (windspeed <span class="sc">^</span> <span class="dv">3</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (windspeed <span class="sc">&gt;</span> <span class="dv">130</span>){</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">warning</span>(<span class="st">"woah, thats really fast. are you sure??"</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (rho <span class="sc">&gt;</span> <span class="fl">1.225</span>) {</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">warning</span>(<span class="st">"that air density is suspicious"</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (radius <span class="sc">&lt;</span> <span class="dv">0</span>) {</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"rotor radius MUST be a positive value (in metres)"</span>)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="fu">calc_wind_power</span>(<span class="fl">1.225</span>, <span class="dv">50</span>, <span class="dv">35</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
 </section>
 
 </main>
